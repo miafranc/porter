@@ -14,7 +14,7 @@ unless you create your own programming language with built-in stemming support &
 # Implementation
 
 The exact algorithm can be found in [http://tartarus.org/martin/PorterStemmer/def.txt](http://tartarus.org/martin/PorterStemmer/def.txt), 
-therefore it won't be repeated here. I will only discuss some of the rules, to understand the underlying idea.
+therefore it won't be repeated here. I will only discuss some of the rules, to understand the underlying idea and the implementation.
 
 A word can be represented by sequences of consonants and vowels, and can be written
 in the following compact form:
@@ -33,16 +33,16 @@ V?(CV){m}C?
 
 A consonant is defined as a letter other than "a", "e", "i", "o", "u", and 
 other than "y" preceded by a consonant. That is, a consonant is either `[a-z]{-}[aeiou]` 
-if it is preceded by a vowel or it is the first letter of a word, or is `[a-z]{-}[aeiouy]`
-otherwise. Therefore we can write the inverted regex macro `C` as
+when preceded by a vowel, or it is the first letter of a word, or `[a-z]{-}[aeiouy]`
+otherwise. Therefore, we can write the inverted regex macro `C` as
 ```
 C ([a-z]{-}[aeiouy])*([a-z]{-}[aeiou])
 ```
-which will denote a nonempty sequence of consonants.
+denoting a nonempty sequence of consonants.
 
 ## Vowels
 
-A letter if not a consonant it is a vowel. We have two cases here:
+A letter if not a consonant is a vowel. We have two cases here:
 
 - (a) if a word starts with a vowel, we can define it as `[aeiou]` (it cannot be "y", because
 by definition that is a consonant);

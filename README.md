@@ -1,4 +1,4 @@
-# Writing the Porter stemming algorithm in Flex
+# Porter stemmer in Flex
 
 Porter's stemming algorithm is one of the most famous and popular 
 state-of-the-art methods for stemming for the English language.

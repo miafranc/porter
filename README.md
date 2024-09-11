@@ -23,7 +23,7 @@ C?(VC){m}V?
 ```
 where `C` and `V` represents a nonempty sequence of consonants and vowels, respectively.
 
-<p>Because Flex processes the input from left to right, we will reverse the term to be stripped, and
+Because Flex processes the input from left to right, we will reverse the term to be stripped, and
 every regular expression we use will be inverted, i.e. a word will have the form:
 ```
 V?(CV){m}C?
@@ -31,22 +31,25 @@ V?(CV){m}C?
 
 ## Consonants
 
-<p>A consonant is defined as a letter other than "a", "e", "i", "o", "u", and 
+A consonant is defined as a letter other than "a", "e", "i", "o", "u", and 
 other than "y" preceded by a consonant. That is, a consonant is either `[a-z]{-}[aeiou]` 
 if it is preceded by a vowel or it is the first letter of a word, or is `[a-z]{-}[aeiouy]`
 otherwise. Therefore we can write the inverted regex macro `C` as
 ```
 C ([a-z]{-}[aeiouy])*([a-z]{-}[aeiou])
 ```
-which will denote a nonempty sequence of consonants.</p>
+which will denote a nonempty sequence of consonants.
 
 ## Vowels
 
 A letter if not a consonant it is a vowel. We have two cases here:
-... (a) if a word starts with a vowel, we can define it as `[aeiou]` (it cannot be "y", because
+
+- (a) if a word starts with a vowel, we can define it as `[aeiou]` (it cannot be "y", because
 by definition that is a consonant);
-... (b) a vowel after a consonant is `[aeiouy]` and so is if preceded by a vowel. Therefore,
-we will have the following two macros:
+- (b) a vowel after a consonant is `[aeiouy]` and so is if preceded by a vowel.
+
+Therefore, we will have the following two macros:
+
 ```
 Ve [aeiou]+
 VbC [aeiouy]+
@@ -87,7 +90,7 @@ M_GT_ONE {VbC}?(({C}{VbC})+{C}{Ve}|({C}{VbC}){2,}{C})
 
 ## The Flex rules
 
-<p>The stemming rule sets has to be used in the following way.
+The stemming rule sets has to be used in the following way.
 The rules are clustered such that at most one rule from such a cluster/set
 can be active at a time. The active rule will be one with the longest 
 matching suffix. For example for the word "agreed" in step 1b of the method,
@@ -96,7 +99,7 @@ rule can be applied; in this case, because the first rule has the
 longer matching suffix "eed", that will be used. First, we search for the matching
 rule based only on the suffix; if there is such a rule, we check for its condition
 if that is satisfied: if yes, we apply the transformation, otherwise we skip to next
-rule set, that is no other rules from the current set will be checked further.</p>
+rule set, that is no other rules from the current set will be checked further.
 
 In order to implement the rule sets we use start conditions (there will be a lot of them in
 the source file, if you take a look). There are two special start conditions: `STEP0` and

@@ -65,25 +65,25 @@ W [a-z]
 ```
 In the rules defined by the stemmer will appear conditions or the form
 `(m=1)`, `(m>0)` and `(m>1)`. It is useful to define
-macros for these, in order to simplify our future regular expressions.
+macros for these, in order to simplify our regular expressions.
 
-For `(m=1)` we have to cases: the word either starts with a vowel or with a consonant.
+For `(m=1)` we have two cases: the word either starts with a vowel or a consonant.
 If the first letter is a vowel then, because `m=1`, we can write `{VbC}?{C}{Ve}`.
-Otherwise the word has the form `{VbC}{C}{VbC}{C}`. Putting it together, we can define the
+Otherwise, the word has the form `{VbC}{C}{VbC}{C}`. Putting it all together, we can define the
 macro `M_ONE` as:
 ```
 M_ONE {VbC}?{C}({VbC}{C}|{Ve})
 ```
 
-For `(m>0)` we have to consider the same two cases. If the word starts with a vowel
-then we have `{VbC}?({C}{VbC})*{C}{Ve}` (because the `{C}{Ve}` at the beginning
+For `(m>0)` the same two cases should be considered. If the word starts with a vowel
+then we have `{VbC}?({C}{VbC})*{C}{Ve}`, because the `{C}{Ve}` at the beginning
 means one `VC` component. Otherwise we arrive to `{VbC}?({C}{VbC})+{C}`. Combining
-these two we obtain the following regex:
+these two, we obtain the following regex:
 ```
 M_GT_ZERO {VbC}?(({C}{VbC})+{C}|({C}{VbC})*{C}{Ve})
 ```
 
-For `(m>1)`, using the same decomposition, we get:
+For `(m>1)` &ndash; using the same decomposition &ndash; we get:
 ```
 M_GT_ONE {VbC}?(({C}{VbC})+{C}{Ve}|({C}{VbC}){2,}{C})
 ```
@@ -93,23 +93,23 @@ M_GT_ONE {VbC}?(({C}{VbC})+{C}{Ve}|({C}{VbC}){2,}{C})
 The stemming rule sets has to be used in the following way.
 The rules are clustered such that at most one rule from such a cluster/set
 can be active at a time. The active rule will be one with the longest 
-matching suffix. For example for the word "agreed" in step 1b of the method,
+matching suffix. For example, for the word "agreed" in step 1b of the method,
 either the `(m>0) EED -> EE` or the `(*v*) ED ->`
 rule can be applied; in this case, because the first rule has the
 longer matching suffix "eed", that will be used. First, we search for the matching
 rule based only on the suffix; if there is such a rule, we check for its condition
-if that is satisfied: if yes, we apply the transformation, otherwise we skip to next
+if that is satisfied: if fulfilled, we apply the transformation, otherwise we skip to next
 rule set, that is no other rules from the current set will be checked further.
 
-In order to implement the rule sets we use start conditions (there will be a lot of them in
-the source file, if you take a look). There are two special start conditions: `STEP0` and
+To implement the rule sets, we use start conditions (there will be a lot of these in
+the source file if you take a look). There are two special start conditions: `STEP0` and
 `STEP6`. `STEP0` reverses the word in order to be able to handle the suffixes,
 and `STEP6` prints the reversed reversed string (and empties the input buffer).
 
 The words have to be supplied in a file where each word lies on a separate line.
 
 How the rule sets and their correct activation are realized? In order to accomplish the 
-<em>longest suffix matching</em> rule, we list the Flex rules in decreasing order of the
+*longest suffix matching rule*, we list the Flex rules in decreasing order of the
 suffixes. That is, for example in step 1a the rule corresponding to `SS -> SS` 
 will be listed earlier than `S -> `. Every rule set is assigned to a start condition 
 using the same notation as in the original paper, therefore it is quite easy to follow the code.
@@ -125,13 +125,13 @@ every start condition defined will have its last regex rule as
 ```
 
 If a suffix has a condition (e.g. `(m>0) EED -> EE`) more than 
-one start conditions has to be used to implement the method. This is because 
-first one has to check the suffix matching without the condition, according to Porter's
-algorithm. For example, our first rule in step 1b is
+one start conditions has to be used to implement the method. This is because, according to Porter's
+algorithm, first one has to check the suffix matching without the condition. 
+For example, our first rule in step 1b is
 ```
 <STEP1b>dee{W}* { yyless(0); BEGIN(STEP1b1); }
 ```
-which switches to `STEP1b1`, where the condition is checked:
+switching to `STEP1b1`, where the condition is checked:
 ```
 <STEP1b1>dee{M_GT_ZERO} { yyless(1); BEGIN(STEP1c); }
 ```

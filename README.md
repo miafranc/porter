@@ -32,11 +32,14 @@ V?(CV){m}C?
 ## Consonants
 
 A consonant is defined as a letter other than "a", "e", "i", "o", "u", and 
-other than "y" preceded by a consonant. That is, a consonant is either `[a-z]{-}[aeiou]` 
-when preceded by a vowel, or it is the first letter of a word, or `[a-z]{-}[aeiouy]`
-otherwise. Therefore, we can write the inverted regex macro `C` as
+other than "y" preceded by a consonant.[^1]
+(Thus, it is a letter other than "a", ..., "u", or it is "y" if preceded by a vowel,
+or if it is the first letter of the word.)
+That is, a consonant either starts with "y" followed by a sequence of `[a-z]{-}[aeiouy]`
+characters, or it is a sequence of `[a-z]{-}[aeiouy]`.
+Therefore, we can write the inverted regex macro `C` as
 ```
-C ([a-z]{-}[aeiouy])*([a-z]{-}[aeiou])
+C (([a-z]{-}[aeiouy])*y|([a-z]{-}[aeiouy])+)
 ```
 denoting a nonempty sequence of consonants.
 
@@ -46,13 +49,12 @@ A letter if not a consonant is a vowel. We have two cases here:
 
 - (a) if a word starts with a vowel, we can define it as `[aeiou]` (it cannot be "y", because
 by definition that is a consonant);
-- (b) a vowel after a consonant is `[aeiouy]` and so is if preceded by a vowel.
+- (b) a vowel after a consonant is `[aeiouy]`.
 
-Therefore, we will have the following two macros:
-
+Therefore, we will have the following two macros denoting nonempty vowel sequences:
 ```
 Ve [aeiou]+
-VbC [aeiouy]+
+VbC ([aeiou]*y|[aeiou]+)
 ```
 Here, because processing the words backwards, `Ve` denotes a vowel sequence at the
 end, while `VbC` represent a sequence of vowels appearing after a sequence of consonants.
@@ -65,11 +67,11 @@ W [a-z]
 ```
 In the rules defined by the stemmer will appear conditions or the form
 `(m=1)`, `(m>0)` and `(m>1)`. It is useful to define
-macros for these, in order to simplify our regular expressions.
+macros for these, in order to simplify the regular expressions.
 
 For `(m=1)` we have two cases: the word either starts with a vowel or a consonant.
 If the first letter is a vowel then, because `m=1`, we can write `{VbC}?{C}{Ve}`.
-Otherwise, the word has the form `{VbC}{C}{VbC}{C}`. Putting it all together, we can define the
+Otherwise, the word has the form `{VbC}?{C}{VbC}{C}`. Putting it all together, we can define the
 macro `M_ONE` as:
 ```
 M_ONE {VbC}?{C}({VbC}{C}|{Ve})
@@ -139,3 +141,6 @@ switching to `STEP1b1`, where the condition is checked:
 To check the rule `(m=1 and not *o) E -> ` in step 5a 
 resulted in a way too long/complicated regular expression, therefore it is
 implemented in a simpler way using more than one rules.
+
+
+[^1]: By definition, if "y" is not at the beginning of the word or the beginning of a syllable, then it is considered to be a vowel ([https://www.merriam-webster.com/grammar/why-y-is-sometimes-a-vowel-usage](https://www.merriam-webster.com/grammar/why-y-is-sometimes-a-vowel-usage)). However, we will follow here the definition given in [http://tartarus.org/martin/PorterStemmer/def.txt](http://tartarus.org/martin/PorterStemmer/def.txt).

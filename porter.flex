@@ -13,9 +13,13 @@ using namespace std;
 %x STEP5a STEP5a1 STEP5b
 %x STEP6
 
-C ([a-z]{-}[aeiouy])*([a-z]{-}[aeiou])
+%x STEP100 STEP101
+
+C (([a-z]{-}[aeiouy])*y|([a-z]{-}[aeiouy])+)
+
 Ve [aeiou]+
-VbC [aeiouy]+
+VbC ([aeiou]*y|[aeiou]+)
+
 W [a-z]
 M_ONE {VbC}?{C}({VbC}{C}|{Ve})
 M_GT_ZERO {VbC}?(({C}{VbC})+{C}|({C}{VbC})*{C}{Ve})
@@ -28,6 +32,7 @@ M_GT_ONE {VbC}?(({C}{VbC})+{C}{Ve}|({C}{VbC}){2,}{C})
 	// Reversing the token:
 	for (int i = 0; i < yyleng; ++i)
 		unput(s[i]);
+	delete s;
 	if (yyleng <= 2)
 		BEGIN(STEP6);
 	else

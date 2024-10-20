@@ -143,4 +143,4 @@ resulted in a way too long/complicated regular expression, therefore it is
 implemented in a simpler way using more than one rules.
 
 
-[^1]: By definition, if "y" is not at the beginning of the word or the beginning of a syllable, then it is considered to be a vowel ([https://www.merriam-webster.com/grammar/why-y-is-sometimes-a-vowel-usage](https://www.merriam-webster.com/grammar/why-y-is-sometimes-a-vowel-usage)). However, we will follow here the definition given in [http://tartarus.org/martin/PorterStemmer/def.txt](http://tartarus.org/martin/PorterStemmer/def.txt).
+[^1]: By the complete definition, if "y" is not at the beginning of the word or the beginning of a syllable, then it is considered to be a vowel ([https://www.merriam-webster.com/grammar/why-y-is-sometimes-a-vowel-usage](https://www.merriam-webster.com/grammar/why-y-is-sometimes-a-vowel-usage)). However, we will follow here the definition given in [http://tartarus.org/martin/PorterStemmer/def.txt](http://tartarus.org/martin/PorterStemmer/def.txt).
